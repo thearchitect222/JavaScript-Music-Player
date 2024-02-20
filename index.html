@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width", initial-scale="1.0">
     <title>Music Player Design</title>
     <link rel="stylesheet" href="style.css">
@@ -13,25 +14,33 @@
      <div class="music-player">
   <nav>
       <div class="circle">
-          <i class="fa-solid fa-angle-left"></i>
+          <i class="fas fa-angle-left"></i>
     </div>
        <div class="circle">
-          <i class="fa-solid fa-bars"></i>
+          <i class="fas fa-bars"></i>
     </div>
   </nav>
     <img src="Media/kanye-west-graduation.jpeg" class="song-img">
-    <h1>Can't Tell Me Nothing</h1>
+    <h1 id="songTitle">Can't Tell Me Nothing</h1>
     <p>Kanye West</p>
-    
-    <audio  id="song">
+
+    <audio  id="song1">
         <source src="Media/Can't Tell Me Nothing.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="song2">
+        <source src="Media/I Wonder.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="song3">
+        <source src="Media/onlymp3.to - Everything I Am-ZtkNfC5Oymw-192k-1703901808.mp3" type="audio/mpeg">
     </audio>
     <input type="range" value="0" id="progress">
     
     <div class="controls">
-    <div><i class="fa-solid fa-backward"></i></div>
-    <div onclick="playPause()"><i class="fa-solid fa-play" id="ctrlIcon"></i></div>
-    <div><i class="fa-solid fa-forward"></i></div>
+    <div><i class="fas fa-backward"></i></div>
+    <div onclick="playPause()"><i class="fas fa-play" id="ctrlIcon"></i></div>
+    <div><i class="fas fa-forward"></i></div>
     </div>
 
     </div>
@@ -39,24 +48,28 @@
  
  <script>
 let progress = document.getElementById("progress");
-let song = document.getElementById("song");
+let song1 = document.getElementById("song1");
+let song2 = document.getElementById("song2");
+let song3 = document.getElementById("song3");
 let ctrlIcon = document.getElementById("ctrlIcon");
+let songTitleElement = document.getElementById("songTitle");
 
-song.onloadmetadata = function(){
-    progress.max =song.duration;
-    progress.value= song.currentTime;
+let currentSong = song1;
 
-}
+currentSong.onloadedmetadata = function() {
+    progress.max = currentSong.duration;
+    progress.value = currentSong.currentTime;
+};
+
 function playPause(){
     if(ctrlIcon.classList.contains("fa-pause")){
-        song.pause();
+        currentSong.pause();
         ctrlIcon.classList.remove("fa-pause");
         ctrlIcon.classList.add("fa-play");
 
 
-    }
-    else{
-        song.play();
+    } else{
+        currentSong.play();
         ctrlIcon.classList.add("fa-pause");
         ctrlIcon.classList.remove("fa-play");
 
@@ -64,21 +77,54 @@ function playPause(){
 
 }
 
-if(song.play()){
-    setInterval(()=>{
-        progress.value = song.currentTime;
-    },500)
-}
+function updateProgress() {
+    progress.value = currentSong.currentTime;
 
-progress.onchange = function(){
-    song.play();
-    song.currentTime = progress.value;
-    ctrlIcon.classList.add("fa-pause");
-      ctrl.classList.remove("fa-play");
+    if (currentSong.currentTime >= currentSong.duration && !currentSong.paused) {
 
+        currentSong.pause();
+        switchSong();
+    }
 }
 
 
- </script>
+setInterval (updateProgress,500); 
+
+progress.oninput = function() {
+    currentSong.currentTime = progress.value;
+    playPause();
+
+};
+
+function switchSong(){
+    console.log("Switching song")
+    if (currentSong === song1){
+        currentSong = song2;
+        songTitleElement.textContent ="I Wonder";
+        
+    } else if (currentSong === song2) {
+        currentSong =song3;
+        songTitleElement.textContent = "Everything I Am";
+    }else {
+        currentSong = song1;
+        songTitleElement.textContent ="Can't Tell Me Nothing"
+    }
+     currentSong.play();
+     ctrlIcon.classList.add("fa-pause");
+     ctrlIcon.classList.remove("fa-play");
+}
+currentSong.currentTime = 0;
+currentSong.play();
+ctrlIcon.classList.add("fa-pause");
+ctrlIcon.classList.remove("fa-play");
+
+
+currentSong.onended = function() {
+    console.log("Current song ended, switching to the next one")
+    currentSong.pause();
+    switchSong();
+}
+
+</script>
 </body>
 </html>
