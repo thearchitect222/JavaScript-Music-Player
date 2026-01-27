@@ -35,6 +35,15 @@
     <audio id="song3">
         <source src="Media/onlymp3.to - Everything I Am-ZtkNfC5Oymw-192k-1703901808.mp3" type="audio/mpeg">
     </audio>
+
+     <audio id="song4">
+        <source src="Media/Flashing Lights.mp3" type="audio/mpeg">
+
+        <audio id="song5">
+            <source src="Media/Kanye West- Homecoming (Explicit Version).mp3" type="audio/mpeg">
+        </audio>
+    </audio>
+
     <input type="range" value="0" id="progress">
     
     <div class="controls">
@@ -48,83 +57,105 @@
  
  <script>
 let progress = document.getElementById("progress");
-let song1 = document.getElementById("song1");
-let song2 = document.getElementById("song2");
-let song3 = document.getElementById("song3");
 let ctrlIcon = document.getElementById("ctrlIcon");
 let songTitleElement = document.getElementById("songTitle");
 
-let currentSong = song1;
+let songs = [
+    document.getElementById("song1"),
+    document.getElementById("song2"),
+    document.getElementById("song3"),
+    document.getElementById("song4"),
+    document.getElementById("song5"),
+];
 
-currentSong.onloadedmetadata = function() {
-    progress.max = currentSong.duration;
-    progress.value = currentSong.currentTime;
-};
+let titles = [
+    "Can't Tell Me Nothing",
+    "I Wonder",
+    "Everything I Am",
+    "Flashing Lights",
+    "Kanye West- Homecoming (Explicit Version)",
+];
 
-function playPause(){
-    if(ctrlIcon.classList.contains("fa-pause")){
-        currentSong.pause();
-        ctrlIcon.classList.remove("fa-pause");
-        ctrlIcon.classList.add("fa-play");
+let currentIndex = 0;
+let currentSong = songs[currentIndex];
 
+/* -------------------------
+   Attach events to ALL songs
+-------------------------- */
+songs.forEach(song => {
 
-    } else{
+    song.onloadedmetadata = function () {
+        if (song === currentSong) {
+            progress.max = song.duration;
+        }
+    };
+
+    song.onended = function () {
+        switchSong();
+    };
+
+});
+
+/* -------------------------
+   Load & play current song
+-------------------------- */
+function loadSong() {
+    songs.forEach(song => song.pause());
+
+    currentSong = songs[currentIndex];
+    songTitleElement.textContent = titles[currentIndex];
+
+    progress.value = 0;
+    currentSong.currentTime = 0;
+
+    currentSong.play();
+    ctrlIcon.classList.add("fa-pause");
+    ctrlIcon.classList.remove("fa-play");
+}
+
+/* -------------------------
+   Play / Pause button
+-------------------------- */
+function playPause() {
+    if (currentSong.paused) {
         currentSong.play();
         ctrlIcon.classList.add("fa-pause");
         ctrlIcon.classList.remove("fa-play");
-
-    }
-
-}
-
-function updateProgress() {
-    progress.value = currentSong.currentTime;
-
-    if (currentSong.currentTime >= currentSong.duration && !currentSong.paused) {
-
+    } else {
         currentSong.pause();
-        switchSong();
+        ctrlIcon.classList.remove("fa-pause");
+        ctrlIcon.classList.add("fa-play");
     }
 }
 
+/* -------------------------
+   Progress bar update
+-------------------------- */
+setInterval(() => {
+    progress.value = currentSong.currentTime;
+}, 500);
 
-setInterval (updateProgress,500); 
-
-progress.oninput = function() {
+/* -------------------------
+   Seek with progress bar
+-------------------------- */
+progress.oninput = function () {
     currentSong.currentTime = progress.value;
-    playPause();
-
 };
 
-function switchSong(){
-    console.log("Switching song")
-    if (currentSong === song1){
-        currentSong = song2;
-        songTitleElement.textContent ="I Wonder";
-        
-    } else if (currentSong === song2) {
-        currentSong =song3;
-        songTitleElement.textContent = "Everything I Am";
-    }else {
-        currentSong = song1;
-        songTitleElement.textContent ="Can't Tell Me Nothing"
-    }
-     currentSong.play();
-     ctrlIcon.classList.add("fa-pause");
-     ctrlIcon.classList.remove("fa-play");
-}
-currentSong.currentTime = 0;
-currentSong.play();
-ctrlIcon.classList.add("fa-pause");
-ctrlIcon.classList.remove("fa-play");
-
-
-currentSong.onended = function() {
-    console.log("Current song ended, switching to the next one")
-    currentSong.pause();
-    switchSong();
+/* -------------------------
+   Switch to next song
+-------------------------- */
+function switchSong() {
+    currentIndex = (currentIndex + 1) % songs.length;
+    loadSong();
 }
 
+/* -------------------------
+   Start first song
+-------------------------- */
+loadSong();
 </script>
+
+
 </body>
 </html>
