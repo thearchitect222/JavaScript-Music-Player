@@ -2,160 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width", initial-scale="1.0">
-    <title>Music Player Design</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
     <link rel="stylesheet" href="style.css">
-
-
     <script src="https://kit.fontawesome.com/a0406e3f2d.js" crossorigin="anonymous"></script>
-</head>   
+</head>
 <body>
-   <div class="container">
-     <div class="music-player">
-  <nav>
-      <div class="circle">
-          <i class="fas fa-angle-left"></i>
-    </div>
-       <div class="circle">
-          <i class="fas fa-bars"></i>
-    </div>
-  </nav>
-    <img src="Media/kanye-west-graduation.jpeg" class="song-img">
-    <h1 id="songTitle">Can't Tell Me Nothing</h1>
-    <p>Kanye West</p>
+    <div class="container">
+        <div class="music-player">
+            <nav>
+                <div class="circle"><i class="fas fa-angle-left"></i></div>
+                <div class="circle"><i class="fas fa-bars"></i></div>
+            </nav>
 
-    <audio  id="song1">
-        <source src="Media/Can't Tell Me Nothing.mp3" type="audio/mpeg">
-    </audio>
+            <!-- Album Cover -->
+            <img id="albumCover" src="Media/kanye-west-graduation.jpeg" class="song-img" alt="Album Cover">
 
-    <audio id="song2">
-        <source src="Media/I Wonder.mp3" type="audio/mpeg">
-    </audio>
+            <!-- Song Title & Artist -->
+            <h1 id="songTitle">Can't Tell Me Nothing</h1>
+            <p id="artist">Kanye West</p>
 
-    <audio id="song3">
-        <source src="Media/onlymp3.to - Everything I Am-ZtkNfC5Oymw-192k-1703901808.mp3" type="audio/mpeg">
-    </audio>
+            <!-- Audio Elements -->
+            <div id="audioContainer">
+                <audio id="song1" src="Media/Can't Tell Me Nothing.mp3"></audio>
+                <audio id="song2" src="Media/I Wonder.mp3"></audio>
+                <audio id="song3" src="Media/onlymp3.to - Everything I Am-ZtkNfC5Oymw-192k-1703901808.mp3"></audio>
+                <audio id="song4" src="Media/Flashing Lights.mp3"></audio>
+                <audio id="song5" src="Media/Kanye West- Homecoming (Explicit Version).mp3"></audio>
+                <audio id="song6" src="Media/Deftones - Cherry Waves.mp3"></audio>
+            </div>
 
-     <audio id="song4">
-        <source src="Media/Flashing Lights.mp3" type="audio/mpeg">
+            <!-- Progress Bar -->
+            <input type="range" value="0" id="progress">
 
-        <audio id="song5">
-            <source src="Media/Kanye West- Homecoming (Explicit Version).mp3" type="audio/mpeg">
-        </audio>
-    </audio>
-
-    <input type="range" value="0" id="progress">
-    
-    <div class="controls">
-    <div><i class="fas fa-backward"></i></div>
-    <div onclick="playPause()"><i class="fas fa-play" id="ctrlIcon"></i></div>
-    <div><i class="fas fa-forward"></i></div>
+            <!-- Controls -->
+            <div class="controls">
+                <div id="prevBtn"><i class="fas fa-backward"></i></div>
+                <div id="playBtn"><i class="fas fa-play" id="ctrlIcon"></i></div>
+                <div id="nextBtn"><i class="fas fa-forward"></i></div>
+            </div>
+        </div>
     </div>
 
-    </div>
- </div>
- 
- <script>
-let progress = document.getElementById("progress");
-let ctrlIcon = document.getElementById("ctrlIcon");
-let songTitleElement = document.getElementById("songTitle");
-
-let songs = [
-    document.getElementById("song1"),
-    document.getElementById("song2"),
-    document.getElementById("song3"),
-    document.getElementById("song4"),
-    document.getElementById("song5"),
-];
-
-let titles = [
-    "Can't Tell Me Nothing",
-    "I Wonder",
-    "Everything I Am",
-    "Flashing Lights",
-    "Kanye West- Homecoming (Explicit Version)",
-];
-
-let currentIndex = 0;
-let currentSong = songs[currentIndex];
-
-/* -------------------------
-   Attach events to ALL songs
--------------------------- */
-songs.forEach(song => {
-
-    song.onloadedmetadata = function () {
-        if (song === currentSong) {
-            progress.max = song.duration;
-        }
-    };
-
-    song.onended = function () {
-        switchSong();
-    };
-
-});
-
-/* -------------------------
-   Load & play current song
--------------------------- */
-function loadSong() {
-    songs.forEach(song => song.pause());
-
-    currentSong = songs[currentIndex];
-    songTitleElement.textContent = titles[currentIndex];
-
-    progress.value = 0;
-    currentSong.currentTime = 0;
-
-    currentSong.play();
-    ctrlIcon.classList.add("fa-pause");
-    ctrlIcon.classList.remove("fa-play");
-}
-
-/* -------------------------
-   Play / Pause button
--------------------------- */
-function playPause() {
-    if (currentSong.paused) {
-        currentSong.play();
-        ctrlIcon.classList.add("fa-pause");
-        ctrlIcon.classList.remove("fa-play");
-    } else {
-        currentSong.pause();
-        ctrlIcon.classList.remove("fa-pause");
-        ctrlIcon.classList.add("fa-play");
-    }
-}
-
-/* -------------------------
-   Progress bar update
--------------------------- */
-setInterval(() => {
-    progress.value = currentSong.currentTime;
-}, 500);
-
-/* -------------------------
-   Seek with progress bar
--------------------------- */
-progress.oninput = function () {
-    currentSong.currentTime = progress.value;
-};
-
-/* -------------------------
-   Switch to next song
--------------------------- */
-function switchSong() {
-    currentIndex = (currentIndex + 1) % songs.length;
-    loadSong();
-}
-
-/* -------------------------
-   Start first song
--------------------------- */
-loadSong();
-</script>
-
-
+    <!-- External JS -->
+    <script src="player.js"></script>
 </body>
 </html>
+
